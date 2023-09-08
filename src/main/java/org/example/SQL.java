@@ -17,8 +17,8 @@ public class SQL {
         switch (value.substring(0, 6).toLowerCase()) {
             case "select" -> select(value);
             case "update" -> update(value);
-            case "delete" -> delete(data);
-            case "insert" -> insert(data);
+            case "delete" -> delete(value);
+            case "insert" -> insert(value);
         }
     }
 
