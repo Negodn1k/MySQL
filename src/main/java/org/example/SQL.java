@@ -1,10 +1,6 @@
 package org.example;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class SQL {
     List<Map<String, Object>> list = new ArrayList<>();
@@ -21,11 +17,12 @@ public class SQL {
         switch (value.substring(0, 6).toLowerCase()) {
             case "select" -> select(value);
             case "update" -> update(value);
-            case "delete" -> delete();
-            case "insert" -> insert();
+            case "delete" -> delete(data);
+            case "insert" -> insert(data);
         }
     }
-private void insert(String data) {
+
+    private void insert(String data) {
         Map<String, Object> row = new HashMap<>();
 
         StringBuilder key = new StringBuilder();
@@ -34,25 +31,25 @@ private void insert(String data) {
         data.replaceAll("VALUES", "");
         data.replaceAll(" ", "");
 
-        for (int i = 0; i != data.length(); i++){
-            if (data.charAt(i) == '='){
+        for (int i = 0; i != data.length(); i++) {
+            if (data.charAt(i) == '=') {
                 i++;
 
-                while (data.charAt(i) != ','){
+                while (data.charAt(i) != ',') {
                     value.append(data.charAt(i));
 
                     i++;
 
-                    if (i == data.length()){
+                    if (i == data.length()) {
                         break;
                     }
                 }
 
                 i--;
             } else if (data.charAt(i) == ',') {
-                try{
+                try {
                     row.put(key.toString(), Integer.parseInt(value.toString()));
-                } catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     row.put(key.toString(), value.toString());
                 }
 
@@ -70,6 +67,7 @@ private void insert(String data) {
         }
 
         list.add(row);
+    }
 
     private void select(String data) {
         data = data.replaceAll("select", "");
@@ -138,7 +136,65 @@ private void insert(String data) {
     }
 
 
-    private void delete() {
+    private void delete(String data) {
+        data = data.replaceAll(" ", "");
+        data = data.replaceAll("'", "");
+        data = data.replaceAll("WHERE", "");
+        data = data.replaceAll("VALUES", "");
+        StringBuilder key = new StringBuilder();
+        StringBuilder value = new StringBuilder();
+        StringBuilder comparison = new StringBuilder();
+
+        for (int i = 0; i != data.length(); i++) {
+            if (data.charAt(i) == '=' || data.charAt(i) == '<' || data.charAt(i) == '>') {
+                comparison.append(data.charAt(i));
+                while (i != data.length() - 1) {
+                    i++;
+                    value.append(data.charAt(i));
+                }
+            } else {
+                key.append(data.charAt(i));
+            }
+        }
+        if (comparison.toString().equals("=")) {
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> row = list.get(i);
+                try {
+                    if (row.containsKey(key.toString()) & row.containsValue(Integer.parseInt(value.toString()))) {
+                        list.remove(i);
+                    }
+                } catch (NumberFormatException e) {
+                    if (row.containsKey(key.toString()) & row.containsValue(value.toString())) {
+                        list.remove(i);
+                    }
+                }
+            }
+        }
+        if (comparison.toString().equals("<")) {
+            int oldIntValue = Integer.parseInt(value.toString());
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> row = list.get(i);
+                for (int index = 0; index < oldIntValue; index++) {
+                    if (row.containsKey(key.toString()) & row.get(key.toString()).equals(index)) {
+                        list.remove(i);
+                    }
+                }
+            }
+        }
+        if (comparison.toString().equals(">")) {
+            int oldIntValue;
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> row = list.get(i);
+                oldIntValue = Integer.parseInt(value.toString());
+                for (int index = oldIntValue; index < mapMaxValue(row); index++) {
+                    if (row.containsKey(key.toString()) & row.get(key.toString()).equals(oldIntValue)) {
+                        list.remove(i);
+                        break;
+                    }
+                    oldIntValue++;
+                }
+            }
+        }
     }
 
     private void update(String value) {
@@ -247,6 +303,6 @@ private void insert(String data) {
         }
 
         return maxValue;
-        }
     }
+}
 
