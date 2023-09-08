@@ -71,8 +71,6 @@ public class SQL {
 
         if (comparison.toString().equals("<")) {
             int oldIntValue = Integer.parseInt(value.toString());
-            // kshvitaly vedmaky zaplatite chekanoy monetoy
-            // chekanaya moonetka = 100rub
 
             for (Map<String, Object> row : list) {
                 for (int i = 0; i < oldIntValue; i++) {
@@ -199,8 +197,6 @@ public class SQL {
             try {
                 oldValue = Integer.parseInt(valve);
             } catch (NumberFormatException e) {
-                //tyt nichego net, ne beyte
-                // idi svoey dorogoy stalker
             }
 
             if (oldValue > maxValue) {
