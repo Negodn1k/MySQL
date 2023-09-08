@@ -19,17 +19,18 @@ public class SQL {
         String value = input.next();
 
         switch (value.substring(0, 6).toLowerCase()) {
-            case "select" -> select();
+            case "select" -> select(value);
             case "update" -> update(value);
             case "delete" -> delete();
             case "insert" -> insert();
         }
     }
+
     private void insert() {
     }
 
     private void select(String data) {
-
+        data = data.replaceAll("select", "");
         data = data.replaceAll("VALUES", "");
         data = data.replaceAll("WHERE", "");
         data = data.replaceAll("'", "");
@@ -208,8 +209,6 @@ public class SQL {
         }
 
         return maxValue;
-    private int mapMaxValue(Map<String, Object> map) {
-        return 0;
+        }
     }
-}
 
