@@ -1,5 +1,6 @@
 package org.example;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,6 @@ import java.util.Scanner;
 
 public class SQL {
     List<Map<String, Object>> list = new ArrayList<>();
-
 
     public SQL() {
         start();
@@ -25,9 +25,51 @@ public class SQL {
             case "insert" -> insert();
         }
     }
+private void insert(String data) {
+        Map<String, Object> row = new HashMap<>();
 
-    private void insert() {
-    }
+        StringBuilder key = new StringBuilder();
+        StringBuilder value = new StringBuilder();
+
+        data.replaceAll("VALUES", "");
+        data.replaceAll(" ", "");
+
+        for (int i = 0; i != data.length(); i++){
+            if (data.charAt(i) == '='){
+                i++;
+
+                while (data.charAt(i) != ','){
+                    value.append(data.charAt(i));
+
+                    i++;
+
+                    if (i == data.length()){
+                        break;
+                    }
+                }
+
+                i--;
+            } else if (data.charAt(i) == ',') {
+                try{
+                    row.put(key.toString(), Integer.parseInt(value.toString()));
+                } catch (NumberFormatException e){
+                    row.put(key.toString(), value.toString());
+                }
+
+                key.delete(0, 1000);
+                value.delete(0, 1000);
+            } else {
+                key.append(data.charAt(i));
+            }
+        }
+
+        try {
+            row.put(key.toString(), Integer.parseInt(value.toString()));
+        } catch (NumberFormatException e) {
+            row.put(key.toString(), value.toString());
+        }
+
+        list.add(row);
 
     private void select(String data) {
         data = data.replaceAll("select", "");
